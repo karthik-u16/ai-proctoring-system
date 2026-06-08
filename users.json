@@ -1,0 +1,14 @@
+{
+    "student": {
+        "password": "password",
+        "role": "student"
+    },
+    "admin": {
+        "password": "adminpass",
+        "role": "admin"
+    },
+    "karthik16dec2005@gmail.com": {
+        "password": "karthi16122005",
+        "role": "student"
+    }
+}

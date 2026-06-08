@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Proctoring Exam</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        #video { width: 100%; max-width: 640px; border: 3px solid #333; border-radius: 10px; }
+        #status { margin: 20px 0; padding: 15px; border-radius: 8px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Live AI Proctoring Exam</h1>
+        <p>Camera is active. Stay in frame and focused!</p>
+        
+        <video id="video" autoplay muted playsinline></video>
+        <canvas id="canvas" style="display: none;"></canvas>
+        
+        <div id="status">Status: Monitoring...</div>
+        <button onclick="finishExam()" class="btn">Finish Exam</button>
+        <br><br>
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </div>
+
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const statusEl = document.getElementById('status');
+
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                video.srcObject = stream;
+                video.play();
+                statusEl.textContent = "Camera Connected";
+                console.log("Camera Connected");
+           })
+           .catch(err => {
+                console.error("Camera Error:", err);
+                statusEl.textContent = "Camera Error: " + err.message;
+           });
+        setInterval(() => {
+            if (video.videoWidth > 0) {
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                ctx.drawImage(video, 0, 0);
+                
+                const imageData = canvas.toDataURL('image/jpeg', 0.7);
+                
+                fetch('/analyze_frame', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ image: imageData })
+                })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.violations && data.violations.length > 0) {
+                        statusEl.innerHTML = `⚠️ Violation: ${data.violations.join('<br>')}`;
+                        statusEl.style.backgroundColor = '#f8d7da';
+                    } else {
+                        statusEl.textContent = '✅ All Good - No Violations';
+                        statusEl.style.backgroundColor = '#d4edda';
+                    }
+                });
+            }
+        }, 3000);
+
+        function finishExam() {
+            fetch('/finish_exam', { method: 'POST' })
+                .then(r => r.json())
+                .then(data => {
+                    alert(`Exam Completed!\nReport: ${data.report}`);
+                    window.location.href = '/';
+                });
+        }
+    </script>
+</body>
+</html>

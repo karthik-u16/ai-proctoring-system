@@ -1,0 +1,10 @@
+.venv311/
+__pycache__/
+*.pyc
+
+reports/
+logs/
+
+.vscode/
+
+.env

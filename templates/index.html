@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Proctoring System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>AI Proctoring System</h1>
+        <p>Welcome to the advanced AI-powered exam proctoring platform.</p>
+        <a href="{{ url_for('login') }}" class="btn">Login to Start Exam</a>
+        
+        <div class="features">
+            <div class="feature">
+                <h3>Real-time Face Detection</h3>
+                <p>Monitors student presence throughout the exam.</p>
+            </div>
+            <div class="feature">
+                <h3>Violation Logging</h3>
+                <p>Automatically detects and logs suspicious activities.</p>
+            </div>
+            <div class="feature">
+                <h3>Detailed Reports</h3>
+                <p>Generates comprehensive proctoring reports.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
